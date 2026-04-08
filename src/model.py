@@ -1,11 +1,12 @@
 from sklearn.linear_model import LinearRegression
 import pandas as pd
+from sklearn.metrics import r2_score
 
-# 1. Blok: Modeli Oluşturma ve Eğitme
+# 1. Blok: denklemi Oluşturma ve modeli Eğitme
 def train_model(X_train, y_train):
     
 
-    # Model objesini tanımlıyoruz (Denklemi kuracak beyin)
+    # regresiyon deklemini oluşturuyoruz 
     model = LinearRegression()#OLS algoritmasıyla çalışan bir modelin altyapısını oluşturuyoruz
     
     # Eğitme işlemi: Model, X (özellikler) ile y (fiyat) arasındaki 
@@ -30,4 +31,11 @@ def get_model_coefficients(model, feature_names):
 def make_predictions(model, X_test):
     predictions = model.predict(X_test)
     return predictions
+def evaluate_model(y_test, predictions):
+    
+    #Modelin tahmin başarısını R-kare (R2) skoru ile ölçer.
+    #1.0 mükemmel tahmin, 0.0 ise başarısız demektir.
+    
+    score = r2_score(y_test, predictions)
+    return score
    
