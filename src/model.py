@@ -1,41 +1,18 @@
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
 import pandas as pd
-from sklearn.metrics import r2_score
 
-# 1. Blok: denklemi Oluşturma ve modeli Eğitme
+# 1. Blok: Modeli Oluşturma ve Eğitme
 def train_model(X_train, y_train):
+    # Lojistik Regresyon modeli (Sınıflandırma yapar)
+    # max_iter=1000 koyuyoruz ki model veriyi öğrenmek için yeterli turu atsın
+    model = LogisticRegression(max_iter=1000)
     
-
-    # regresiyon deklemini oluşturuyoruz 
-    model = LinearRegression()#OLS algoritmasıyla çalışan bir modelin altyapısını oluşturuyoruz
-    
-    # Eğitme işlemi: Model, X (özellikler) ile y (fiyat) arasındaki 
-    # katsayıları (beta değerlerini) burada hesaplar.
-    model.fit(X_train, y_train) #bu komut sayesinde model özellikler ile fiyat arasındaki ilişkiyi öğrenir. modelin eğitim süreci başlar
-    #OLS algortitması çalışmay başlar. Katsayılar burada hesaplanır ve model, bu katsayıları kullanarak gelecekteki tahminler yapabilir hale gelir
-    
+    # Eğitme işlemi: Özellikler ile 'Lüks mü?' hedefi arasındaki sınırı öğrenir
+    model.fit(X_train, y_train)
     return model
 
 # 2. Blok: Tahmin Yapma
-
-# 1. Fonksiyon: Sadece katsayıları gösterir
-def get_model_coefficients(model, feature_names):
-    coef_df = pd.DataFrame({
-        'Özellik': feature_names,
-        'Katsayi (Ağirlik)': model.coef_
-    })
-    print(f"\nModelin Sabit Terimi (Beta 0): {model.intercept_:.2f}")
-    return coef_df
-
-# 2. Fonksiyon: Sadece tahmin yapar
 def make_predictions(model, X_test):
+    # Artık çıktı fiyat değil; 0 (Ekonomik) veya 1 (Lüks) dönecek
     predictions = model.predict(X_test)
     return predictions
-def evaluate_model(y_test, predictions):
-    
-    #Modelin tahmin başarısını R-kare (R2) skoru ile ölçer.
-    #1.0 mükemmel tahmin, 0.0 ise başarısız demektir.
-    
-    score = r2_score(y_test, predictions)
-    return score
-   
