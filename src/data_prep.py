@@ -10,10 +10,13 @@ def load_and_clean_data(filepath):
         threshold = df['price'].median()
         df['is_luxury'] = (df['price'] > threshold).astype(int)
     
-    # KRİTİK: Modeli sadece senin sorduğun sorularla sınırlıyoruz
+    #  Modeli sadece kullanıcının sordduğun sorularla sınırlıyoruz.
     # Böylece model başka hiçbir şeye (ağırlık, motor hacmi vb.) bakamaz
-    needed_cols = ['fueltype', 'carbody', 'horsepower', 'is_luxury']
+    needed_cols = ['fueltype', 'carbody', 'horsepower', 'is_luxury', 'enginesize']
     
+    # Manuel Scaling: Motor hacmini 100'e bölerek beygir gücüyle aynı teraziye getiriyoruz
+    if 'enginesize' in df.columns:
+        df['enginesize'] = df['enginesize'] / 100
     # Sadece bu sütunları al, diğer her şeyi çöpe at
     df = df[needed_cols]
     

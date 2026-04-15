@@ -58,3 +58,47 @@ def plot_sigmoid_curve(model, X_test, y_test):
     plt.savefig('sigmoid_egrisi.png')
     print("✅ S-Eğrisi grafiği 'sigmoid_egrisi.png' olarak kaydedildi.")
     plt.show(block=True)
+
+    
+    
+import pandas as pd
+
+def plot_feature_importance(model, feature_names):
+    """Lojistik Regresyon katsayılarını (coefficients) bar chart olarak görselleştirir."""
+    # Katsayıları alıp mutlak değerlerini hesaplıyoruz (önem derecesi için)
+    importances = pd.DataFrame({
+        'Feature': feature_names,
+        'Importance': model.coef_[0] # Katsayılar (pozitif lüksü, negatif ekonomiyi destekler)
+    })
+    
+    # Mutlak değere göre sıralayalım
+    importances['Abs_Importance'] = importances['Importance'].abs()
+    importances = importances.sort_values(by='Abs_Importance', ascending=False)
+
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Importance', y='Feature', data=importances, palette='viridis')
+    plt.title('Lojistik Regresyon: Değişken Önem Sırası (Coefficients)')
+    plt.xlabel('Katsayı Değeri (Lüksü Destekleme Derecesi)')
+    plt.ylabel('Teknik Özellik')
+    plt.axvline(x=0, color='black', linestyle='--', linewidth=1) # Sıfır çizgisi
+    plt.grid(axis='x', alpha=0.3)
+    
+    # Kaydet ve Göster
+    plt.savefig('feature_importance.png')
+    print("✅ Değişken Önem grafiği 'feature_importance.png' olarak kaydedildi.")
+    plt.show(block=True)
+
+def plot_correlation_heatmap(df):
+    """Veri setindeki değişkenler arası ilişkiyi (correlation) gösteren ısı haritası."""
+    # Sadece sayısal sütunları seçelim
+    numerical_df = df.select_dtypes(include=[np.number])
+    corr_matrix = numerical_df.corr()
+
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
+    plt.title('Teknik Özellikler Arası İlişki Matrisi (Correlation Heatmap)')
+    
+    # Kaydet ve Göster
+    plt.savefig('correlation_heatmap.png')
+    print("✅ Korelasyon Isı Haritası 'correlation_heatmap.png' olarak kaydedildi.")
+    plt.show(block=True)
