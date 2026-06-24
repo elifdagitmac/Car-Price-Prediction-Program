@@ -2,10 +2,10 @@ import pandas as pd
 import sys
 import os
 
-# Klasör yolunu garantiye alıyoruz
+# We're making sure the folder path is safe
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
-# Importları en temiz haliyle yapıyoruz
+# We do imports in the cleanest way possible
 from src.data_prep import load_and_clean_data, encode_categorical_data, split_data
 from src.model import train_model, make_predictions
 import src.utils as utils
@@ -14,27 +14,27 @@ def main():
     print("🚀 Araba Segment Sınıflandırma Programı Başlıyor...")
     
     try:
-        # 1. Veri Hazırlığı
+        # 1. Data Preparation
         csv_path = "car_data.csv"
         df = load_and_clean_data(csv_path)
         df_encoded, mappings = encode_categorical_data(df)
         X_train, X_test, y_train, y_test = split_data(df_encoded)
         
-        # 2. Model Eğitimi
+        # 2. Model Training
         model = train_model(X_train, y_train)
         
-        # 3. Başarıyı Ölç ve Görselleştir
+        # 3. Measure and Visualize Success
         y_tahmin = make_predictions(model, X_test)
         
-        # Fonksiyonları utils üzerinden çağırıyoruz (Hata almamak için en güvenli yol)
+        # We call the functions through utils (the safest way to avoid errors)
         utils.evaluate_model_performance(y_test, y_tahmin)
         utils.plot_confusion_matrix(y_test, y_tahmin)
         utils.plot_sigmoid_curve(model, X_test, y_test)
-        # Modelin hangi özelliklere (beygir, motor vb.) ne kadar puan verdiğini gösterir
+        # Shows how much the model scores for each feature (horsepower, engine, etc.)
         ozellik_isimleri = X_train.columns.tolist()
         utils.plot_feature_importance(model, ozellik_isimleri)
-        # 2. Korelasyon Isı Haritası
-        # Verilerin birbiriyle olan ilişkisini gösterir
+        # 2. Correlation Heatmap
+        # It shows how the data are related to each other
         utils.plot_correlation_heatmap(df_encoded)
 
         print("\n--- 🚗 ARAÇ SEGMENT TAHMİN SİSTEMİ ---")
