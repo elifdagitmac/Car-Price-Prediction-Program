@@ -5,37 +5,37 @@ from sklearn.preprocessing import LabelEncoder
 def load_and_clean_data(filepath):
     df = pd.read_csv(filepath)
     
-    # Hedef Değişken (Fiyatın ortasından bölüyoruz)
+    # Target Variable (We divide from the middle of the price)
     if 'price' in df.columns:
         threshold = df['price'].median()
         df['is_luxury'] = (df['price'] > threshold).astype(int)
     
-    #  Modeli sadece kullanıcının sordduğun sorularla sınırlıyoruz.
-    # Böylece model başka hiçbir şeye (ağırlık, motor hacmi vb.) bakamaz
+    #  We only limit the model to the questions the user asks.
+    # So the model can't look at anything else (like weight, engine size, etc.)
     needed_cols = ['fueltype', 'carbody', 'horsepower', 'is_luxury', 'enginesize']
     
-    # Manuel Scaling: Motor hacmini 100'e bölerek beygir gücüyle aynı teraziye getiriyoruz
+    # Manual Scaling: We divide the engine displacement by 100 to put it on the same scale as horsepower
     if 'enginesize' in df.columns:
         df['enginesize'] = df['enginesize'] / 100
-    # Sadece bu sütunları al, diğer her şeyi çöpe at
+    # Just take these columns, throw everything else away
     df = df[needed_cols]
     
     return df.dropna()
 
 def encode_categorical_data(df):
     le = LabelEncoder()
-    mappings = {} # Kelime -> Sayı sözlüğümüz burada duracak
+    mappings = {} #Our word -> number dictionary will stay here
     
-    # Sadece metin içeren sütunları seçiyoruz
+    # We only select columns that contain text
     cat_cols = df.select_dtypes(include=['object']).columns
     
     for col in cat_cols:
-        # Sayıya çeviriyoruz
+        # We're converting it to a number
         df[col] = le.fit_transform(df[col].astype(str))
-        # Sözlüğü kaydediyoruz (Örn: {'gas': 1, 'diesel': 0})
+        # We are saving the dictionary (e.g., {'gas': 1, 'diesel': 0})
         mappings[col] = dict(zip(le.classes_, le.transform(le.classes_)))
         
-    return df, mappings # Hem güncellenmiş tabloyu hem sözlüğü döndürür
+    return df, mappings # It returns both the updated table and the dictionary
 
 def split_data(df):
     y = df['is_luxury']
